@@ -2,7 +2,7 @@ import {ValidationPipe} from '@nestjs/common';
 import {ConfigService} from '@nestjs/config';
 import {NestFactory} from '@nestjs/core';
 import {RedisStore} from 'connect-redis';
-import cookieParser from 'cookie-parser';
+import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
 import IORedis from 'ioredis';
 
@@ -14,9 +14,9 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 
 	const config = app.get(ConfigService);
-	const redis = new IORedis(config.getOrThrow<string>('REDIS_URL'));
+	const redis = new IORedis(config.getOrThrow<string>('REDIS_URI'));
 
-	app.use(cookieParser(config.getOrThrow<string>('COOKIE_SECRET')));
+	app.use(cookieParser(config.getOrThrow<string>('COOKIES_SECRET')));
 
 	app.use(
 		session({
@@ -46,7 +46,7 @@ async function bootstrap() {
 		exposedHeaders: ['set-cookie']
 	});
 
-	await app.listen(config.getOrThrow<number>('PORT'));
+	await app.listen(config.getOrThrow<number>('APPLICATION_PORT'));
 }
 
 bootstrap();
